@@ -1,0 +1,75 @@
+#! /usr/bin/python3
+
+from subprocess import *
+import os
+import sys
+
+ACCURACY = 0.01
+
+# Extract files
+extracted_files = expected_files = str()
+run(["mkdir", "extracted"])
+try:
+    extracted_files = run(["tar", "-C", "extracted", "-xvf", sys.argv[1]], timeout=3, stdout=PIPE)
+    extracted_files = set(extracted_files.stdout.decode('utf-8').splitlines())
+    extracted_files = extracted_files.difference(set([a for a in extracted_files if a.endswith('.pdf')]))
+    expected_files = {"ex2.cpp", "Makefile"}
+except TimeoutExpired:
+    print("Timeout error when extracting. Exiting.")
+    exit()
+
+print("============================================")
+print("======                                ======")
+print("======   Successfully extracted tar   ======")
+print("======                                ======")
+print("============================================")
+print()
+print()
+
+os.chdir("extracted")
+
+
+make_process = Popen(["make"], stderr=STDOUT)
+if make_process.wait() != 0:
+    print("====================================================")
+    print("=======                                      =======")
+    print("=======   Error! Unable to compile.          =======")
+    print("=======             Terminating              =======")
+    print("=======                                      =======")
+    print("====================================================")
+    exit(0)
+
+print("===============================================")
+print("======                                   ======")
+print("======  Successfully ran Makefile        ======")
+print("======  check if you got any warnings    ======")
+print("======                                   ======")
+print("===============================================")
+print()
+print()
+
+
+unknown = "/cs/course/2018/labcpp/www/ex2/texts/unknown.txt"
+hamilton = "/cs/course/2018/labcpp/www/ex2/texts/hamilton.txt"
+hamlet = "/cs/course/2018/labcpp/www/ex2/texts/hamlet.txt"
+words = "/cs/course/2018/labcpp/www/ex2/frequent_words.txt"
+author = "/cs/course/2018/labcpp/www/ex2/texts/find_the_author"
+student_sol = Popen(["./find_the_author",words,unknown,hamilton,hamlet], stdout=PIPE, stderr=PIPE)
+student_out = student_sol.communicate(timeout=5)[0].decode('utf-8').rstrip()
+res = student_out.split()[-1]
+
+if (0.983947 - float(res)) > 0.01:
+    print("failed presubmit test.")
+    print("your result is: ",float(res))
+    print("school result is: 0.983947")
+else:
+    print("passed presubmit test.")
+
+os.chdir("../")
+run(["rm", "-r", "extracted"])
+
+print("========================================")
+print("======                            ======")
+print("======   Finished coding tests    ======")
+print("======                            ======")
+print("========================================")
