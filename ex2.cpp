@@ -6,6 +6,11 @@
 
 const int MIN_LEGAL_ARGS = 4;
 
+/**
+ * runs main
+ * @param argc arg num
+ * @param argv container for the files
+ */
 int main(int argc, char *argv[])
 {
     double distance;
@@ -24,7 +29,7 @@ int main(int argc, char *argv[])
     {
         std::unordered_map<std::string, int> knownAuthor;
         unknownWords(argv[i], knownAuthor, wordContainer);
-        distance = calculate_angle(unknownAuthor, knownAuthor);
+        distance = calculateAngle(unknownAuthor, knownAuthor);
         std::cout << std::setprecision(6) << argv[i] << " " << distance << std::endl;
         if(distance > highestScore)
         {

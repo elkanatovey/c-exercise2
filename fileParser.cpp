@@ -28,7 +28,7 @@ void commonWords(const std::string &fileName, std::unordered_set<std::string>
     currentFile.open(fileName);
     if(!currentFile.is_open())
     {
-        std::cerr << "Unable to open file "<< fileName << std::endl;
+        std::cerr << "Unable to open file " << fileName << std::endl;
         exit(1);
     }
     std::string currentWord;
@@ -76,11 +76,11 @@ double calculateNorm(const std::unordered_map<std::string, int> &text)
  * @param knownText v2
  * @return dist
  */
-double calculate_angle(const std::unordered_map<std::string, int> &uknownText,
-                         const std::unordered_map<std::string, int> &knownText)
+double calculateAngle(const std::unordered_map<std::string, int> &uknownText,
+                      const std::unordered_map<std::string, int> &knownText)
 {
     double score = 0, divisor, secondVal;
-    std::unordered_map<std::string,int>:: const_iterator knownTextIter;
+    std::unordered_map<std::string, int>:: const_iterator knownTextIter;
     double norm1 = calculateNorm(uknownText);
     double norm2 = calculateNorm(knownText);
     divisor = norm1 * norm2;
@@ -110,13 +110,13 @@ double calculate_angle(const std::unordered_map<std::string, int> &uknownText,
  * @param signatureWords set of signature words
  */
 void unknownWords(const std::string &fileName, std::unordered_map<std::string, int>
-        &wordContainer, const std::unordered_set<std::string> &signatureWords)
+                  &wordContainer, const std::unordered_set<std::string> &signatureWords)
 {
     std::ifstream currentFile;
     currentFile.open(fileName);
     if(!currentFile.is_open())
     {
-        std::cerr << "Unable to open file "<< fileName << std::endl;
+        std::cerr << "Unable to open file " << fileName << std::endl;
         exit(1);
     }
     std::string currentLine;
@@ -124,7 +124,8 @@ void unknownWords(const std::string &fileName, std::unordered_map<std::string, i
     {
         std::vector<std::string> lineWords;
         parseLine(lineWords, currentLine);
-        for (auto &lineWord : lineWords) {
+        for (auto &lineWord : lineWords)
+        {
             // split up words
             std::transform(lineWord.begin(), lineWord.end(), lineWord.begin(), ::tolower);
             if (signatureWords.count(lineWord))

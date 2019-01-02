@@ -27,7 +27,7 @@ void commonWords(const std::string &fileName, std::unordered_set<std::string> &w
  * @param signatureWords set of signature words
  */
 void unknownWords(const std::string &fileName, std::unordered_map<std::string, int>
-                   &wordContainer, const std::unordered_set<std::string> &signatureWords);
+                  &wordContainer, const std::unordered_set<std::string> &signatureWords);
 
 /**
  * calculate the distance between to textVectors
@@ -35,7 +35,7 @@ void unknownWords(const std::string &fileName, std::unordered_map<std::string, i
  * @param knownText v2
  * @return dist
 */
-double calculate_angle(const std::unordered_map<std::string, int> &uknownText,
-                        const std::unordered_map<std::string, int> &knownText);
+double calculateAngle(const std::unordered_map<std::string, int> &uknownText,
+                      const std::unordered_map<std::string, int> &knownText);
 
 #endif //CPP_EXERCISE2_FILEPARSER_H
