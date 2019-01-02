@@ -7,17 +7,24 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <boost/tokenizer.hpp>
+#include <cmath>
+
+
+//void commonWords(const boost::filesystem::path &full_path, std::unordered_set<std::string>
+//&wordContainer, const std::string &fileName)
 
 /**
  * read the word list in from moemory
  * @param fileName
  * @param wordContainer
  */
-void commonWords(const std::string &fileName, std::unordered_set<std::string> &wordContainer)
+void commonWords(const std::string &fileName, std::unordered_set<std::string>
+                 &wordContainer)
 {
     std::ifstream currentFile;
     currentFile.open(fileName);
-    if(!currentFile)
+    if(!currentFile.is_open())
     {
         std::cerr << "Unable to open file "<< fileName << std::endl;
         exit(1);
@@ -30,33 +37,93 @@ void commonWords(const std::string &fileName, std::unordered_set<std::string> &w
     currentFile.close();
 }
 
-void parseLine(std::vector<std::string> &lineContainer, std::string currentLine)
+/**
+ * receive a line and tokenize into a container
+ * @param lineContainer vector to contain tokens
+ * @param currentLine line to tokenize
+ */
+void parseLine(std::vector<std::string> &lineContainer, const std::string &currentLine)
 {
-    boost::
+    typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
+    boost::char_separator<char> sep(";:! ,\t\r");
+    tokenizer tokens(currentLine, sep);
+    for(tokenizer::iterator iter = tokens.begin(); iter != tokens.end(); ++iter)
+    {
+        lineContainer.push_back(*iter);
+    }
 }
 
-double calculate_angle(){}
+double calculateNorm(const std::unordered_map<std::string, int> &text)
+{
+    double sum = 0;
+    for(auto &word : text)
+    {
+        sum += std::pow(word.second, 2);
+    }
+    return std::sqrt(sum);
+}
+
+/**
+ * calculate the distance between to textVectors
+ * @param uknownText v1
+ * @param knownText v2
+ * @return dist
+ */
+double calculate_angle(const std::unordered_map<std::string, int> &uknownText,
+                         const std::unordered_map<std::string, int> &knownText)
+{
+    double score = 0, divisor, secondVal;
+    std::unordered_map<std::string,int>:: const_iterator knownTextIter;
+    double norm1 = calculateNorm(uknownText);
+    double norm2 = calculateNorm(knownText);
+    divisor = norm1 * norm2;
+    if(divisor == 0)
+    {
+        return 0;
+    }
+    for(auto &word : uknownText)
+    {
+        secondVal = 0;
+        knownTextIter = knownText.find(word.first);
+        if(knownTextIter != knownText.end())
+        {
+            secondVal = knownTextIter -> second;
+        }
+        score += word.second * secondVal;
+    }
+    score = score / divisor;
+    return score;
+}
 
 
-
-void uknownWords(const std::string &fileName, std::unordered_map<std::string, int>
+/**
+ * calculate the signature of a given text file
+ * @param fileName
+ * @param wordContainer
+ * @param signatureWords
+ */
+void unknownWords(const std::string &fileName, std::unordered_map<std::string, int>
         &wordContainer, const std::unordered_set<std::string> &signatureWords)
 {
     std::ifstream currentFile;
     currentFile.open(fileName);
-    if(!currentFile)
+    if(!currentFile.is_open())
     {
         std::cerr << "Unable to open file "<< fileName << std::endl;
         exit(1);
     }
-    std::string currentWord;
-    while(getline(currentFile, currentWord))
+    std::string currentLine;
+    while(getline(currentFile, currentLine))
     {
-
-        // split up words
-        if(signatureWords.count(currentWord))
-        {
-            wordContainer[currentWord]++;
+        std::vector<std::string> lineWords;
+        parseLine(lineWords, currentLine);
+        for (auto &lineWord : lineWords) {
+            // split up words
+            std::transform(lineWord.begin(), lineWord.end(), lineWord.begin(), ::tolower);
+            if (signatureWords.count(lineWord))
+            {
+                wordContainer[lineWord]++;
+            }
         }
     }
     currentFile.close();

@@ -1,47 +1,44 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-//#include <unordered_set>
 #include "fileParser.h"
+#include <iomanip>
+//#include <boost/filesystem.hpp>
 
 const int MIN_LEGAL_ARGS = 4;
 
-//void commonWords(const std::string &fileName, std::unordered_set<std::string> &wordContainer)
-//{
-//    std::ifstream currentFile;
-//    currentFile.open(fileName);
-//    if(!currentFile)
-//    {
-//        std::cerr << "Unable to open file "<< fileName << std::endl;
-//        exit(1);
-//    }
-//    std::string currentWord;
-//    while(getline(currentFile, currentWord))
-//    {
-//        wordContainer.insert(currentWord);
-//    }
-//    currentFile.close();
-//}
-
-
 int main(int argc, char *argv[])
 {
+    double distance;
     if(argc < MIN_LEGAL_ARGS)
     {
         std::cerr << "Usage: find_the_author<frequent_words.txt> <text1> ...!" << std::endl;
         exit(-1);
     }
-    std::unordered_set<std::string> wordContainer;
+    std::unordered_set<std::string> wordContainer; // words to use as signatures
     //input frequent words
+//    boost::filesystem::path full_path = boost::filesystem::system_complete(argv[1]);
+//    commonWords(full_path, wordContainer, argv[1]);
     commonWords(argv[1], wordContainer);
-
-    //input uknown + score
-
-    for(int i = 3; i <= argc; i++)
+    std::unordered_map<std::string, int> unknownAuthor;
+    unknownWords(argv[2], unknownAuthor, wordContainer); //unknown author signature
+    //input unknown + score
+    std::string highestAuthor = " score 0";
+    double highestScore = 0;
+    for(int i = 3; i < argc; i++)
     {
-        //calculate score
+        std::unordered_map<std::string, int> knownAuthor;
+        unknownWords(argv[i], knownAuthor, wordContainer);
+        distance = calculate_angle(unknownAuthor, knownAuthor);
+        std::cout << std::setprecision(3) << argv[i] << " " << distance << std::endl;
+        if(distance > highestScore)
+        {
+            highestScore = distance;
+            highestAuthor = argv[i];
+        }
     }
     //print max
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Best matching author is " << highestAuthor << " score " << highestScore
+    << std::endl;
     return 0;
 }
