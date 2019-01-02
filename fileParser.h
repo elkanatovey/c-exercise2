@@ -9,15 +9,33 @@
 #include <unordered_set>
 #include <unordered_map>
 
-//void commonWords(const boost::filesystem::path &full_path, std::unordered_set<std::string>
-//&wordContainer, const std::string &fileName);
+// --------------------------------------------------------------------------------------
+// This file contains the fileParser headers.
+// --------------------------------------------------------------------------------------
 
+/**
+ * read the word list in from memmory
+ * @param fileName reads in the common words file
+ * @param wordContainer container for the words
+ */
 void commonWords(const std::string &fileName, std::unordered_set<std::string> &wordContainer);
 
+/**
+ * calculate the signature of a given text file
+ * @param fileName file we are working on
+ * @param wordContainer where to put words
+ * @param signatureWords set of signature words
+ */
 void unknownWords(const std::string &fileName, std::unordered_map<std::string, int>
-&wordContainer, const std::unordered_set<std::string> &signatureWords);
+                   &wordContainer, const std::unordered_set<std::string> &signatureWords);
 
+/**
+ * calculate the distance between to textVectors
+ * @param uknownText v1
+ * @param knownText v2
+ * @return dist
+*/
 double calculate_angle(const std::unordered_map<std::string, int> &uknownText,
-                       const std::unordered_map<std::string, int> &knownText);
+                        const std::unordered_map<std::string, int> &knownText);
 
 #endif //CPP_EXERCISE2_FILEPARSER_H

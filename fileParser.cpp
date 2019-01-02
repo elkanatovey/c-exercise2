@@ -11,13 +11,15 @@
 #include <cmath>
 
 
-//void commonWords(const boost::filesystem::path &full_path, std::unordered_set<std::string>
-//&wordContainer, const std::string &fileName)
+// --------------------------------------------------------------------------------------
+// This file contains the implementation of the fileParser functions.
+// --------------------------------------------------------------------------------------
+
 
 /**
- * read the word list in from moemory
- * @param fileName
- * @param wordContainer
+ * read the word list in from memmory
+ * @param fileName reads in the common words file
+ * @param wordContainer container for the words
  */
 void commonWords(const std::string &fileName, std::unordered_set<std::string>
                  &wordContainer)
@@ -38,14 +40,14 @@ void commonWords(const std::string &fileName, std::unordered_set<std::string>
 }
 
 /**
- * receive a line and tokenize into a container
+ * receive a line and tokenize into a container (helper function)
  * @param lineContainer vector to contain tokens
  * @param currentLine line to tokenize
  */
 void parseLine(std::vector<std::string> &lineContainer, const std::string &currentLine)
 {
     typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
-    boost::char_separator<char> sep(";:! ,\t\r");
+    boost::char_separator<char> sep(" \r\n,!;:\"");
     tokenizer tokens(currentLine, sep);
     for(tokenizer::iterator iter = tokens.begin(); iter != tokens.end(); ++iter)
     {
@@ -53,6 +55,11 @@ void parseLine(std::vector<std::string> &lineContainer, const std::string &curre
     }
 }
 
+/**
+ * helper function calculates vector norm
+ * @param text map unordered_map containing words
+ * @return the norm
+ */
 double calculateNorm(const std::unordered_map<std::string, int> &text)
 {
     double sum = 0;
@@ -98,9 +105,9 @@ double calculate_angle(const std::unordered_map<std::string, int> &uknownText,
 
 /**
  * calculate the signature of a given text file
- * @param fileName
- * @param wordContainer
- * @param signatureWords
+ * @param fileName file we are working on
+ * @param wordContainer where to put words
+ * @param signatureWords set of signature words
  */
 void unknownWords(const std::string &fileName, std::unordered_map<std::string, int>
         &wordContainer, const std::unordered_set<std::string> &signatureWords)
